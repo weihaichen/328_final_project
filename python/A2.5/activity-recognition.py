@@ -22,7 +22,7 @@ from features import extract_features # make sure features.py is in the same dir
 from util import reorient, reset_vars
 
 # TODO: Replace the string with your user ID
-user_id = ""
+user_id = "s72gmq9cfzhbuz9f"
 
 count = 0
 
