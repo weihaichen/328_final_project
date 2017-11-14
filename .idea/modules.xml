@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CS328-A1.iml" filepath="$PROJECT_DIR$/CS328-A1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/CS328-A1-update.iml" filepath="$PROJECT_DIR$/CS328-A1-update.iml" />
+      <module fileurl="file://C:\Users\Che-Wei\Desktop\a2-5\cs328-a2-5-group-7\CS328-A1.iml" filepath="C:\Users\Che-Wei\Desktop\a2-5\cs328-a2-5-group-7\CS328-A1.iml" />
+      <module fileurl="file://C:\Users\Che-Wei\Desktop\a2-5\cs328-a2-5-group-7\CS328-A1-update.iml" filepath="C:\Users\Che-Wei\Desktop\a2-5\cs328-a2-5-group-7\CS328-A1-update.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/cs328-a2-5-group-7.iml" filepath="$PROJECT_DIR$/cs328-a2-5-group-7.iml" />
     </modules>
