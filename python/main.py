@@ -25,7 +25,7 @@ from A1 import step_detection
 
 # TODO: fill this empty string with your batch id
 # e.g., user_id = "waz92bs17acqn3cx"
-user_id = ""
+user_id = "s72gmq9cfzhbuz9f"
 c = Client(user_id)
 
 # TODO: comment this line out when starting part 3

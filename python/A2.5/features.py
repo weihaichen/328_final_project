@@ -14,27 +14,60 @@ it is still publicly accessible).
 
 """
 
+
 import numpy as np
+import math
 
 def _compute_mean_features(window):
     """
-    Computes the mean x, y and z acceleration over the given window. 
+    Computes the mean x, y and z acceleration over the given window.
     """
     return np.mean(window, axis=0)
 
+def _compute_variance_feature(window):
+    return  np.var(window,axis=0)
+
+def _compute_zerocrossingrate_feature(window):
+    return np.sum(np.count_nonzero(np.diff(np.sign(window),axis=0),axis=0))
+
+
+def _compute_magnitudesignal(window):
+    return np.mean(np.linalg.norm(window,axis=1))
+
+
+def _compute_FFT(window):
+    x = window[:, 0]
+    y = window[:, 1]
+    z = window[:, 2]
+    frep = np.fft.rfftfreq(20)
+    xfft = np.fft.rfft(x, n=20).astype(float)
+    yfft = np.fft.rfft(y, n=20).astype(float)
+    zfft = np.fft.rfft(z, n=20).astype(float)
+    return np.array([[frep[xfft.argmax()]], [frep[yfft.argmax()]], [frep[zfft.argmax()]]])
+
+def _computer_entropy(window):
+    hist1 = np.histogram(window,bins=5)[0]
+    hist2 = [p for p in hist1 if p != 0]
+    entropy = [ -p * math.log(abs(p)) for p in hist2]
+    return np.sum(entropy)
+
 def extract_features(window):
     """
-    Here is where you will extract your features from the data over 
-    the given window. We have given you an example of computing 
+    Here is where you will extract your features from the data over
+    the given window. We have given you an example of computing
     the mean and appending it to the feature matrix X.
-    
-    Make sure that X is an N x d matrix, where N is the number 
+
+    Make sure that X is an N x d matrix, where N is the number
     of data points and d is the number of features.
-    
+
     """
-    
+
     x = []
-    
-    x = np.append(x, _compute_mean_features(window))   
-    
+
+    x = np.append(x, _compute_mean_features(window))
+    x = np.append(x, _compute_variance_feature(window))
+    x = np.append(x, _compute_zerocrossingrate_feature(window))
+    x = np.append(x, _compute_magnitudesignal(window))
+    x = np.append(x, _compute_FFT(window))
+    x = np.append(x, _computer_entropy(window))
     return x
