@@ -140,7 +140,7 @@ tree = DecisionTreeClassifier(criterion="entropy",max_depth=3)
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 
-cv = cross_validation.KFold(n, n_folds=10, shuffle=False, random_state=None)
+cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 
 total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
@@ -251,7 +251,7 @@ print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/flo
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 svc=svm.LinearSVC()
-cv = cross_validation.KFold(n, n_folds=10, shuffle=False, random_state=None)
+cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 
 total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
 
