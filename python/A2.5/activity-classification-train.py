@@ -232,7 +232,7 @@ print ("All folds average accuracy: {}".format((float(correctness)/float(total))
 
 # Computing all folds average precision
 
-#print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
+print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
 print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
 print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
 print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
@@ -343,7 +343,7 @@ print ("All folds average accuracy: {}".format((float(correctness)/float(total))
 
 # Computing all folds average precision
 
-#print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
+print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
 print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
 print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
 print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
@@ -354,6 +354,7 @@ print ("All folds average recall, Walking: {}".format(float(recall_total[2])/flo
 print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/float(recall_total_count[3])))
 
 # when ready, set this to the best model you found, trained on all the data:
-best_classifier = None
+tree.fit(X,y)
+best_classifier = tree
 with open('classifier.pickle', 'wb') as f: # 'wb' stands for 'write bytes'
     pickle.dump(best_classifier, f)
