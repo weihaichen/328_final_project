@@ -6,21 +6,21 @@ Created on Wed Sep 21 16:02:58 2016
 
 Assignment 2 : Activity Recognition
 
-This is the starter script used to train an activity recognition 
+This is the starter script used to train an activity recognition
 classifier on accelerometer data.
 
-See the assignment details for instructions. Basically you will train 
-a decision tree classifier and vary its parameters and evalute its 
-performance by computing the average accuracy, precision and recall 
-metrics over 10-fold cross-validation. You will then train another 
+See the assignment details for instructions. Basically you will train
+a decision tree classifier and vary its parameters and evalute its
+performance by computing the average accuracy, precision and recall
+metrics over 10-fold cross-validation. You will then train another
 classifier for comparison.
 
-Once you get to part 4 of the assignment, where you will collect your 
-own data, change the filename to reference the file containing the 
-data you collected. Then retrain the classifier and choose the best 
+Once you get to part 4 of the assignment, where you will collect your
+own data, change the filename to reference the file containing the
+data you collected. Then retrain the classifier and choose the best
 classifier to save to disk. This will be used in your final system.
 
-Make sure to chek the assignment details, since the instructions here are 
+Make sure to chek the assignment details, since the instructions here are
 not complete.
 
 """
@@ -80,8 +80,9 @@ n_samples = 1000
 time_elapsed_seconds = (data[n_samples,0] - data[0,0]) / 1000
 sampling_rate = n_samples / time_elapsed_seconds
 
-feature_names = ["mean X", "mean Y", "mean Z"]
-class_names = ["Stationary", "Walking"]
+feature_names = ["mean X", "mean Y", "mean Z","Variance X","Variance Y", "Variance Z","ZCR","Magnitude-signal","Xfft","Yfft","Zfft","Entropy"]
+
+class_names = ["Jogging", "Jumping","Walking","Sitting"]
 
 print("Extracting features and labels for window size {} and step size {}...".format(window_size, step_size))
 sys.stdout.flush()
@@ -93,14 +94,14 @@ y = np.zeros(0,)
 
 for i,window_with_timestamp_and_label in slidingWindow(data, window_size, step_size):
     # omit timestamp and label from accelerometer window for feature extraction:
-    window = window_with_timestamp_and_label[:,1:-1]  
+    window = window_with_timestamp_and_label[:,1:-1]
     # extract features over window:
     x = extract_features(window)
     # append features:
     X = np.append(X, np.reshape(x, (1,-1)), axis=0)
     # append label:
     y = np.append(y, window_with_timestamp_and_label[10, -1])
-    
+
 print("Finished feature extraction over {} windows".format(len(X)))
 print("Unique labels found: {}".format(set(y)))
 sys.stdout.flush()
@@ -114,15 +115,15 @@ sys.stdout.flush()
 # We provided you with an example of plotting two features.
 # We plotted the mean X acceleration against the mean Y acceleration.
 # It should be clear from the plot that these two features are alone very uninformative.
-print("Plotting data points...")
+"""print("Plotting data points...")
 sys.stdout.flush()
 plt.figure()
 formats = ['bo', 'go']
 for i in range(0,len(y),10): # only plot 1/10th of the points, it's a lot of data!
     plt.plot(X[i,0], X[i,1], formats[int(y[i])])
-    
-plt.show()
 
+plt.show()
+"""
 # %%---------------------------------------------------------------------------
 #
 #		                Train & Evaluate Classifier
@@ -135,17 +136,224 @@ n_classes = len(class_names)
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 
+tree = DecisionTreeClassifier(criterion="entropy",max_depth=3)
+# TODO: Train and evaluate your decision tree classifier over 10-fold CV.
+# Report average accuracy, precision and recall metrics.
+
 cv = cross_validation.KFold(n, n_folds=10, shuffle=False, random_state=None)
 
+total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+
+precision_total_count = np.array([0.,0.,0.,0.])
+precision_total = np.array([0.,0.,0.,0.])
+
+recall_total_count = np.array([0.,0.,0.,0.])
+recall_total = np.array([0.,0.,0.,0.])
+
 for i, (train_indexes, test_indexes) in enumerate(cv):
-    print("Fold {}".format(i))
-    
+    print ("Fold {} : The confusion matrix is :".format(i))
+    x_train = X[train_indexes, :]
+    y_train = y[train_indexes]
+    x_test = X[test_indexes, :]
+    y_test = y[test_indexes]
+    tree.fit(x_train, y_train)
+    y_pred=tree.predict(x_test)
+
+    conf = confusion_matrix(y_test, y_pred,labels=[0,1,2,3])
+    print conf
+    correctness = 0
+    total = 0
+    for x_coord in range(0, 4):
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                correctness+=conf[x_coord,y_coord]
+            total+=conf[x_coord,y_coord]
+            total_fold_matrix[x_coord,y_coord]+=conf[x_coord,y_coord]
+
+    print ("Accuracy:{}".format(float(correctness)/float(total)))
+
+    # Printing precision, precision = true positive / (true positive + false positive)
+    max_column = 0
+    max_val = 0
+    for  y_coord in range(0,4):
+        total = 0
+        for x_coord in range(0,4):
+            total += conf[x_coord, y_coord]
+        if(total > max_val):
+            max_column = y_coord
+            max_val = total
+
+    correctness = 0
+    total = 0
+    for x_coord in range(0,4):
+        if x_coord == max_column:
+            correctness+=conf[x_coord, max_column]
+        total += conf[x_coord,max_column]
+
+    precision_total[max_column] += float(correctness)/float(total)
+    precision_total_count[max_column] +=1
+
+
+    print ("Precision:{}".format(float(correctness)/float(total)))
+
+    # Printing Recall, recall = true positive / (true positive + false negative)
+    max_row = 0
+    max_val = 0
+    for  x_coord in range(0,4):
+        total = 0
+        for y_coord in range(0,4):
+            total += conf[x_coord, y_coord]
+        if(total > max_val):
+            max_row = x_coord
+            max_val = total
+
+    correctness = 0
+    total = 0
+    for y_coord in range(0,4):
+        if y_coord == max_column:
+            correctness+=conf[max_row, y_coord]
+        total += conf[max_row, y_coord]
+
+    recall_total[max_row] += float(correctness)/float(total)
+    recall_total_count[max_row] += 1
+
+    print ("Recall:{}".format(float(correctness)/float(total)))
+
+    print("\n")
+
+correctness = 0
+total = 0
+for x_coord in range(0,4):
+    for y_coord in range(0,4):
+        if x_coord == y_coord:
+            correctness += total_fold_matrix[x_coord, y_coord]
+        total += total_fold_matrix[x_coord, y_coord]
+print ("All folds average accuracy: {}".format((float(correctness)/float(total))))
+
+# Computing all folds average precision
+
+#print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
+print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
+print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
+print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
+
+print ("All folds average recall, Jogging: {}".format(float(recall_total[0])/float(recall_total_count[0])))
+print ("All folds average recall, Jumping: {}".format(float(recall_total[1])/float(recall_total_count[1])))
+print ("All folds average recall, Walking: {}".format(float(recall_total[2])/float(recall_total_count[2])))
+print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/float(recall_total_count[3])))
+
 # TODO: Evaluate another classifier, i.e. SVM, Logistic Regression, k-NN, etc.
-    
-# TODO: Once you have collected data, train your best model on the entire 
+#######################################################################################################################################################
+# TODO: Once you have collected data, train your best model on the entire
 # dataset. Then save it to disk as follows:
 
+
+# TODO: Train and evaluate your decision tree classifier over 10-fold CV.
+# Report average accuracy, precision and recall metrics.
+svc=svm.LinearSVC()
+cv = cross_validation.KFold(n, n_folds=10, shuffle=False, random_state=None)
+
+total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+
+precision_total_count = np.array([0.,0.,0.,0.])
+precision_total = np.array([0.,0.,0.,0.])
+
+recall_total_count = np.array([0.,0.,0.,0.])
+recall_total = np.array([0.,0.,0.,0.])
+
+for i, (train_indexes, test_indexes) in enumerate(cv):
+    print ("Fold {} : The confusion matrix is :".format(i))
+    x_train = X[train_indexes, :]
+    y_train = y[train_indexes]
+    x_test = X[test_indexes, :]
+    y_test = y[test_indexes]
+    svc.fit(x_train, y_train)
+    y_pred=svc.predict(x_test)
+
+    conf = confusion_matrix(y_test, y_pred,labels=[0,1,2,3])
+    print conf
+    correctness = 0
+    total = 0
+    for x_coord in range(0, 4):
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                correctness+=conf[x_coord,y_coord]
+            total+=conf[x_coord,y_coord]
+            total_fold_matrix[x_coord,y_coord]+=conf[x_coord,y_coord]
+
+    print ("Accuracy:{}".format(float(correctness)/float(total)))
+
+    # Printing precision, precision = true positive / (true positive + false positive)
+    max_column = 0
+    max_val = 0
+    for  y_coord in range(0,4):
+        total = 0
+        for x_coord in range(0,4):
+            total += conf[x_coord, y_coord]
+        if(total > max_val):
+            max_column = y_coord
+            max_val = total
+
+    correctness = 0
+    total = 0
+    for x_coord in range(0,4):
+        if x_coord == max_column:
+            correctness+=conf[x_coord, max_column]
+        total += conf[x_coord,max_column]
+
+    precision_total[max_column] += float(correctness)/float(total)
+    precision_total_count[max_column] +=1
+
+
+    print ("Precision:{}".format(float(correctness)/float(total)))
+
+    # Printing Recall, recall = true positive / (true positive + false negative)
+    max_row = 0
+    max_val = 0
+    for  x_coord in range(0,4):
+        total = 0
+        for y_coord in range(0,4):
+            total += conf[x_coord, y_coord]
+        if(total > max_val):
+            max_row = x_coord
+            max_val = total
+
+    correctness = 0
+    total = 0
+    for y_coord in range(0,4):
+        if y_coord == max_column:
+            correctness+=conf[max_row, y_coord]
+        total += conf[max_row, y_coord]
+
+    recall_total[max_row] += float(correctness)/float(total)
+    recall_total_count[max_row] += 1
+
+    print ("Recall:{}".format(float(correctness)/float(total)))
+
+    print("\n")
+
+correctness = 0
+total = 0
+for x_coord in range(0,4):
+    for y_coord in range(0,4):
+        if x_coord == y_coord:
+            correctness += total_fold_matrix[x_coord, y_coord]
+        total += total_fold_matrix[x_coord, y_coord]
+print ("All folds average accuracy: {}".format((float(correctness)/float(total))))
+
+# Computing all folds average precision
+
+#print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
+print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
+print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
+print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
+
+print ("All folds average recall, Jogging: {}".format(float(recall_total[0])/float(recall_total_count[0])))
+print ("All folds average recall, Jumping: {}".format(float(recall_total[1])/float(recall_total_count[1])))
+print ("All folds average recall, Walking: {}".format(float(recall_total[2])/float(recall_total_count[2])))
+print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/float(recall_total_count[3])))
+
 # when ready, set this to the best model you found, trained on all the data:
-best_classifier = None 
+best_classifier = None
 with open('classifier.pickle', 'wb') as f: # 'wb' stands for 'write bytes'
     pickle.dump(best_classifier, f)
