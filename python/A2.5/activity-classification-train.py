@@ -73,11 +73,11 @@ data = np.append(reoriented_data_with_timestamps, data[:,-1:], axis=1)
 
 # you may want to play around with the window and step sizes
 #default window_size = 100, step_size = 100
-window_size = 70
-step_size = 2
+window_size = 20
+step_size = 20
 
 # sampling rate for the sample data should be about 25 Hz; take a brief window to confirm this
-n_samples = 700
+n_samples = 1000
 time_elapsed_seconds = (data[n_samples,0] - data[0,0]) / 1000
 sampling_rate = n_samples / time_elapsed_seconds
 
@@ -189,9 +189,11 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
                     local_total += conf[i, y_coord]
                 local_correctness = conf[x_coord, y_coord]
                 correctness += conf[x_coord, y_coord]
-                precision_total[x_coord] += float(local_correctness)/float(local_total)
+                #print(local_total)
+                if(local_total != 0):
+                    precision_total[x_coord] += float(local_correctness)/float(local_total)
+                    local_precision += float(local_correctness)/float(local_total)
                 precision_total_count += 1
-                local_precision += float(local_correctness)/float(local_total)
                 local_correctness = 0
                 local_total = 0
 
@@ -213,8 +215,9 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
                     local_total += conf[x_coord, i]
                 local_correctness = conf[x_coord, y_coord]
                 correctness += conf[x_coord, y_coord]
-                recall_total[x_coord] += float(local_correctness)/float(local_total)
-                local_recall += float(local_correctness)/float(local_total)
+                if(local_total != 0):
+                    recall_total[x_coord] += float(local_correctness)/float(local_total)
+                    local_recall += float(local_correctness)/float(local_total)
                 recall_total_count += 1
                 local_correctness = 0
                 local_total = 0
@@ -300,9 +303,11 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
                     local_total += conf[i, y_coord]
                 local_correctness = conf[x_coord, y_coord]
                 correctness += conf[x_coord, y_coord]
-                precision_total[x_coord] += float(local_correctness)/float(local_total)
+                #print(local_total)
+                if(local_total != 0):
+                    precision_total[x_coord] += float(local_correctness)/float(local_total)
+                    local_precision += float(local_correctness)/float(local_total)
                 precision_total_count += 1
-                local_precision += float(local_correctness)/float(local_total)
                 local_correctness = 0
                 local_total = 0
 
@@ -324,8 +329,9 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
                     local_total += conf[x_coord, i]
                 local_correctness = conf[x_coord, y_coord]
                 correctness += conf[x_coord, y_coord]
-                recall_total[x_coord] += float(local_correctness)/float(local_total)
-                local_recall += float(local_correctness)/float(local_total)
+                if(local_total != 0):
+                    recall_total[x_coord] += float(local_correctness)/float(local_total)
+                    local_recall += float(local_correctness)/float(local_total)
                 recall_total_count += 1
                 local_correctness = 0
                 local_total = 0
