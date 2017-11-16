@@ -5,9 +5,6 @@ c.) All the activities are performed for around 6 minutes
 d.) Phones are placed within the pocket of the pants with screen facing outward
 e.) Research subjects performed motion regurarily as they would do the activities
 f.) We did not account for variance in the phone orientation, when we perform activities, we placed the phone in an identical orientation: camera facing skin, screen facing outward, and phone is placed downward in the pocket
-Which classification algorithm and parameters did you select in your final system? Why?
-How did the classifier perform initially? Try at making at least two changes to the model (use different features or different parameters to the classifier) and report how the results change.
-Describe your results. Report the accuracy, precision and recall metrics for the classifier and features you decided to use. How do the results compare to the results on the sample data? Briefly speak to how well your algorithm works in practice, drawing on the empirical results. Do they match up?
 
 2.)I have chose using decision tree classifier with criterion="entropy" and max_depth=9 as my final system. I have compared decision tree model and linearSVC model, and discover that tree model tends to perform much better than linearSVC, meaning it has higher accuracy, percision and recall rate. Then I try to twits the parameters a bit and found different criterion have similar result but a deeper depth such as 9 perform better than depth 3.
 3.)DecisionTreeClassifier with depth 3 and criterion="entropy" has 88% accuracy to start with, and then i try a different criterion and discover they are mostly the same, about 88%. Then I try a tree with deeper depth and found that it would perform better than we start with, depth 9 with 91% accuracy.
