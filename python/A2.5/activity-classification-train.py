@@ -72,11 +72,12 @@ data = np.append(reoriented_data_with_timestamps, data[:,-1:], axis=1)
 # -----------------------------------------------------------------------------
 
 # you may want to play around with the window and step sizes
-window_size = 20
-step_size = 20
+#default window_size = 100, step_size = 100
+window_size = 70
+step_size = 2
 
 # sampling rate for the sample data should be about 25 Hz; take a brief window to confirm this
-n_samples = 1000
+n_samples = 700
 time_elapsed_seconds = (data[n_samples,0] - data[0,0]) / 1000
 sampling_rate = n_samples / time_elapsed_seconds
 
@@ -161,6 +162,7 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
 
     conf = confusion_matrix(y_test, y_pred,labels=[0,1,2,3])
     print conf
+
     correctness = 0
     total = 0
     for x_coord in range(0, 4):
@@ -173,51 +175,51 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
     print ("Accuracy:{}".format(float(correctness)/float(total)))
 
     # Printing precision, precision = true positive / (true positive + false positive)
-    max_column = 0
-    max_val = 0
-    for  y_coord in range(0,4):
-        total = 0
-        for x_coord in range(0,4):
-            total += conf[x_coord, y_coord]
-        if(total > max_val):
-            max_column = y_coord
-            max_val = total
 
     correctness = 0
     total = 0
+    local_correctness = 0
+    local_total = 0
+    local_precision = 0
     for x_coord in range(0,4):
-        if x_coord == max_column:
-            correctness+=conf[x_coord, max_column]
-        total += conf[x_coord,max_column]
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                for i in range(0,4):
+                    total += conf[i, y_coord]
+                    local_total += conf[i, y_coord]
+                local_correctness = conf[x_coord, y_coord]
+                correctness += conf[x_coord, y_coord]
+                precision_total[x_coord] += float(local_correctness)/float(local_total)
+                precision_total_count += 1
+                local_precision += float(local_correctness)/float(local_total)
+                local_correctness = 0
+                local_total = 0
 
-    precision_total[max_column] += float(correctness)/float(total)
-    precision_total_count[max_column] +=1
 
-
-    print ("Precision:{}".format(float(correctness)/float(total)))
+    print ("Precision:{}".format(float(local_precision/4)))
 
     # Printing Recall, recall = true positive / (true positive + false negative)
-    max_row = 0
-    max_val = 0
-    for  x_coord in range(0,4):
-        total = 0
-        for y_coord in range(0,4):
-            total += conf[x_coord, y_coord]
-        if(total > max_val):
-            max_row = x_coord
-            max_val = total
 
     correctness = 0
     total = 0
-    for y_coord in range(0,4):
-        if y_coord == max_column:
-            correctness+=conf[max_row, y_coord]
-        total += conf[max_row, y_coord]
+    local_correctness = 0
+    local_total = 0
+    local_recall = 0
+    for x_coord in range(0,4):
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                for i in range(0,4):
+                    total += conf[x_coord, i]
+                    local_total += conf[x_coord, i]
+                local_correctness = conf[x_coord, y_coord]
+                correctness += conf[x_coord, y_coord]
+                recall_total[x_coord] += float(local_correctness)/float(local_total)
+                local_recall += float(local_correctness)/float(local_total)
+                recall_total_count += 1
+                local_correctness = 0
+                local_total = 0
 
-    recall_total[max_row] += float(correctness)/float(total)
-    recall_total_count[max_row] += 1
-
-    print ("Recall:{}".format(float(correctness)/float(total)))
+    print ("Recall:{}".format(float(local_recall/4)))
 
     print("\n")
 
@@ -232,15 +234,15 @@ print ("All folds average accuracy: {}".format((float(correctness)/float(total))
 
 # Computing all folds average precision
 
-print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
-print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
-print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
-print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
+print ("All folds average precision, Jogging: {}".format(float(precision_total[0]/10)))
+print ("All folds average precision, Jumping: {}".format(float(precision_total[1]/10)))
+print ("All folds average precision, Walking: {}".format(float(precision_total[2]/10)))
+print ("All folds average precision, Sitting: {}".format(float(precision_total[3]/10)))
 
-print ("All folds average recall, Jogging: {}".format(float(recall_total[0])/float(recall_total_count[0])))
-print ("All folds average recall, Jumping: {}".format(float(recall_total[1])/float(recall_total_count[1])))
-print ("All folds average recall, Walking: {}".format(float(recall_total[2])/float(recall_total_count[2])))
-print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/float(recall_total_count[3])))
+print ("All folds average recall, Jogging: {}".format(float(recall_total[0]/10)))
+print ("All folds average recall, Jumping: {}".format(float(recall_total[1]/10)))
+print ("All folds average recall, Walking: {}".format(float(recall_total[2]/10)))
+print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))
 
 # TODO: Evaluate another classifier, i.e. SVM, Logistic Regression, k-NN, etc.
 #######################################################################################################################################################
@@ -284,51 +286,52 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
     print ("Accuracy:{}".format(float(correctness)/float(total)))
 
     # Printing precision, precision = true positive / (true positive + false positive)
-    max_column = 0
-    max_val = 0
-    for  y_coord in range(0,4):
-        total = 0
-        for x_coord in range(0,4):
-            total += conf[x_coord, y_coord]
-        if(total > max_val):
-            max_column = y_coord
-            max_val = total
 
     correctness = 0
     total = 0
+    local_correctness = 0
+    local_total = 0
+    local_precision = 0
     for x_coord in range(0,4):
-        if x_coord == max_column:
-            correctness+=conf[x_coord, max_column]
-        total += conf[x_coord,max_column]
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                for i in range(0,4):
+                    total += conf[i, y_coord]
+                    local_total += conf[i, y_coord]
+                local_correctness = conf[x_coord, y_coord]
+                correctness += conf[x_coord, y_coord]
+                precision_total[x_coord] += float(local_correctness)/float(local_total)
+                precision_total_count += 1
+                local_precision += float(local_correctness)/float(local_total)
+                local_correctness = 0
+                local_total = 0
 
-    precision_total[max_column] += float(correctness)/float(total)
-    precision_total_count[max_column] +=1
 
-
-    print ("Precision:{}".format(float(correctness)/float(total)))
+    print ("Precision:{}".format(float(local_precision/4)))
 
     # Printing Recall, recall = true positive / (true positive + false negative)
-    max_row = 0
-    max_val = 0
-    for  x_coord in range(0,4):
-        total = 0
-        for y_coord in range(0,4):
-            total += conf[x_coord, y_coord]
-        if(total > max_val):
-            max_row = x_coord
-            max_val = total
 
     correctness = 0
     total = 0
-    for y_coord in range(0,4):
-        if y_coord == max_column:
-            correctness+=conf[max_row, y_coord]
-        total += conf[max_row, y_coord]
+    local_correctness = 0
+    local_total = 0
+    local_recall = 0
+    for x_coord in range(0,4):
+        for y_coord in range(0,4):
+            if(x_coord == y_coord):
+                for i in range(0,4):
+                    total += conf[x_coord, i]
+                    local_total += conf[x_coord, i]
+                local_correctness = conf[x_coord, y_coord]
+                correctness += conf[x_coord, y_coord]
+                recall_total[x_coord] += float(local_correctness)/float(local_total)
+                local_recall += float(local_correctness)/float(local_total)
+                recall_total_count += 1
+                local_correctness = 0
+                local_total = 0
 
-    recall_total[max_row] += float(correctness)/float(total)
-    recall_total_count[max_row] += 1
+    print ("Recall:{}".format(float(local_recall/4)))
 
-    print ("Recall:{}".format(float(correctness)/float(total)))
 
     print("\n")
 
@@ -343,18 +346,17 @@ print ("All folds average accuracy: {}".format((float(correctness)/float(total))
 
 # Computing all folds average precision
 
-print ("All folds average precision, Jogging: {}".format(float(precision_total[0])/float(precision_total_count[0])))
-print ("All folds average precision, Jumping: {}".format(float(precision_total[1])/float(precision_total_count[1])))
-print ("All folds average precision, Walking: {}".format(float(precision_total[2])/float(precision_total_count[2])))
-print ("All folds average precision, Sitting: {}".format(float(precision_total[3])/float(precision_total_count[3])))
+print ("All folds average precision, Jogging: {}".format(float(precision_total[0]/10)))
+print ("All folds average precision, Jumping: {}".format(float(precision_total[1]/10)))
+print ("All folds average precision, Walking: {}".format(float(precision_total[2]/10)))
+print ("All folds average precision, Sitting: {}".format(float(precision_total[3]/10)))
 
-print ("All folds average recall, Jogging: {}".format(float(recall_total[0])/float(recall_total_count[0])))
-print ("All folds average recall, Jumping: {}".format(float(recall_total[1])/float(recall_total_count[1])))
-print ("All folds average recall, Walking: {}".format(float(recall_total[2])/float(recall_total_count[2])))
-print ("All folds average recall, Sitting: {}".format(float(recall_total[3])/float(recall_total_count[3])))
+print ("All folds average recall, Jogging: {}".format(float(recall_total[0]/10)))
+print ("All folds average recall, Jumping: {}".format(float(recall_total[1]/10)))
+print ("All folds average recall, Walking: {}".format(float(recall_total[2]/10)))
+print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))
 
 # when ready, set this to the best model you found, trained on all the data:
-tree.fit(X,y)
-best_classifier = tree
+best_classifier = None
 with open('classifier.pickle', 'wb') as f: # 'wb' stands for 'write bytes'
     pickle.dump(best_classifier, f)
