@@ -62,7 +62,7 @@ def predict(window):
 
     # TODO: Predict class label
 
-    return
+
     x=extract_features(window)
     act=classifier.predict(x)
     if(act[0]==0):
@@ -77,7 +77,7 @@ def predict(window):
     if(act[0]==3):
         onActivityDetected("Sitting")
         print("Sitting")
-
+    return
 
 #################   Server Connection Code  ####################
 

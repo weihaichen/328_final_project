@@ -137,7 +137,7 @@ n_classes = len(class_names)
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 
-tree = DecisionTreeClassifier(criterion="entropy",max_depth=3)
+tree = DecisionTreeClassifier(criterion="entropy",max_depth=9)
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 
@@ -363,6 +363,6 @@ print ("All folds average recall, Walking: {}".format(float(recall_total[2]/10))
 print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))
 
 # when ready, set this to the best model you found, trained on all the data:
-best_classifier = None
+best_classifier = tree
 with open('classifier.pickle', 'wb') as f: # 'wb' stands for 'write bytes'
     pickle.dump(best_classifier, f)

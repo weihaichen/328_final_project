@@ -1,0 +1,40 @@
+depth=9
+All folds average accuracy: 0.911790649809
+All folds average precision, Jogging: 0.916095685509
+All folds average precision, Jumping: 0.857928297847
+All folds average precision, Walking: 0.913129305335
+All folds average precision, Sitting: 0.962404739083
+All folds average recall, Jogging: 0.892941685677
+All folds average recall, Jumping: 0.890062526829
+All folds average recall, Walking: 0.903723798487
+All folds average recall, Sitting: 0.967011037821
+depth=3
+All folds average accuracy: 0.880623346075
+All folds average precision, Jogging: 0.978879792323
+All folds average precision, Jumping: 0.743578052811
+All folds average precision, Walking: 0.906802867493
+All folds average precision, Sitting: 0.943922080573
+All folds average recall, Jogging: 0.772947083345
+All folds average recall, Jumping: 0.948632842899
+All folds average recall, Walking: 0.871252427973
+All folds average recall, Sitting: 0.950099930056
+feature:gini
+All folds average accuracy: 0.881799470744
+All folds average precision, Jogging: 0.946119165241
+All folds average precision, Jumping: 0.756510516121
+All folds average precision, Walking: 0.88499546075
+All folds average precision, Sitting: 0.978881290518
+All folds average recall, Jogging: 0.809190736071
+All folds average recall, Jumping: 0.921189568536
+All folds average recall, Walking: 0.876967706549
+All folds average recall, Sitting: 0.932333863359
+feature:gini & depth=9
+All folds average accuracy: 0.910320493972
+All folds average precision, Jogging: 0.907062599603
+All folds average precision, Jumping: 0.872375182478
+All folds average precision, Walking: 0.901114397971
+All folds average precision, Sitting: 0.968167227901
+All folds average recall, Jogging: 0.898426598064
+All folds average recall, Jumping: 0.874220954901
+All folds average recall, Walking: 0.908421922888
+All folds average recall, Sitting: 0.96445158342
