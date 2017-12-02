@@ -8,7 +8,7 @@
   -->
 
 <resources>
-    <string name="app_name">My Activities</string>
+    <string name="app_name">My Activities_final_project</string>
 
     <string name="accelerometer_reading_format_string" formatted="false">X: %f Y: %f Z: %f </string>
     <string name="accelerometer_reading_initial">X: — Y: — Z: — </string>
@@ -55,5 +55,7 @@
         <item>1 - Jumping</item>
         <item>2 - Walking</item>
         <item>3 - Sitting</item>
+        <item>4 - Falling</item>
+        <item>5 - Sitting Down</item>
     </string-array>
 </resources>
