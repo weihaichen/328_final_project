@@ -55,7 +55,9 @@
         <item>1 - Jumping</item>
         <item>2 - Walking</item>
         <item>3 - Sitting</item>
-        <item>4 - Falling</item>
+        <item>4 - Falling Forward</item>
         <item>5 - Sitting Down</item>
+        <item>6 - Falling Backward</item>
+        <item>7 - Squating</item>
     </string-array>
 </resources>
