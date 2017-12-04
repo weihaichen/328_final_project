@@ -134,119 +134,59 @@ plt.show()
 n = len(y)
 n_classes = len(class_names)
 
-# TODO: Train and evaluate your decision tree classifier over 10-fold CV.
-# Report average accuracy, precision and recall metrics.
+print("\n")
+print("---------------------- Decision Tree -------------------------")
 
-tree = DecisionTreeClassifier(criterion="entropy",max_depth=9)
-# TODO: Train and evaluate your decision tree classifier over 10-fold CV.
-# Report average accuracy, precision and recall metrics.
+trees = [] # various decision tree classifiers
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=3))
+trees.append(DecisionTreeClassifier(criterion="gini", max_depth=3))
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=12))
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=6))
+for tree_index, tree in enumerate(trees):
 
-cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
+   total_accuracy = 0.0
+   total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0]
+   total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0]
 
-total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
+   cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
+   for i, (train_indexes, test_indexes) in enumerate(cv):
+       X_train = X[train_indexes, :]
+       y_train = y[train_indexes]
+       X_test = X[test_indexes, :]
+       y_test = y[test_indexes]
 
-precision_total_count = np.array([0.,0.,0.,0.])
-precision_total = np.array([0.,0.,0.,0.])
+       print("Fold {} : Training decision tree classifier over {} points...".format(i, len(y_train)))
+       sys.stdout.flush()
+       tree.fit(X_train, y_train)
+       print("Evaluating classifier over {} points...".format(len(y_test)))
 
-recall_total_count = np.array([0.,0.,0.,0.])
-recall_total = np.array([0.,0.,0.,0.])
+       # predict the labels on the test data
+       y_pred = tree.predict(X_test)
 
-for i, (train_indexes, test_indexes) in enumerate(cv):
-    print ("Fold {} : The confusion matrix is :".format(i))
-    x_train = X[train_indexes, :]
-    y_train = y[train_indexes]
-    x_test = X[test_indexes, :]
-    y_test = y[test_indexes]
-    tree.fit(x_train, y_train)
-    y_pred=tree.predict(x_test)
+       # show the comparison between the predicted and ground-truth labels
+       conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5])
 
-    conf = confusion_matrix(y_test, y_pred,labels=[0,1,2,3])
-    print conf
+       accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
+       precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
+       recall = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=0).astype(float))
 
-    correctness = 0
-    total = 0
-    for x_coord in range(0, 4):
-        for y_coord in range(0,4):
-            if(x_coord == y_coord):
-                correctness+=conf[x_coord,y_coord]
-            total+=conf[x_coord,y_coord]
-            total_fold_matrix[x_coord,y_coord]+=conf[x_coord,y_coord]
+       total_accuracy += accuracy
+       total_precision += precision
+       total_recall += recall
 
-    print ("Accuracy:{}".format(float(correctness)/float(total)))
+       print("The accuracy is {}".format(accuracy))
+       print("The precision is {}".format(precision))
+       print("The recall is {}".format(recall))
 
-    # Printing precision, precision = true positive / (true positive + false positive)
+       print("\n")
+       sys.stdout.flush()
 
-    correctness = 0
-    total = 0
-    local_correctness = 0
-    local_total = 0
-    local_precision = 0
-    for x_coord in range(0,4):
-        for y_coord in range(0,4):
-            if(x_coord == y_coord):
-                for i in range(0,4):
-                    total += conf[i, y_coord]
-                    local_total += conf[i, y_coord]
-                local_correctness = conf[x_coord, y_coord]
-                correctness += conf[x_coord, y_coord]
-                #print(local_total)
-                if(local_total != 0):
-                    precision_total[x_coord] += float(local_correctness)/float(local_total)
-                    local_precision += float(local_correctness)/float(local_total)
-                precision_total_count += 1
-                local_correctness = 0
-                local_total = 0
+   print("The average accuracy is {}".format(total_accuracy/10.0))
+   print("The average precision is {}".format(total_precision/10.0))
+   print("The average recall is {}".format(total_recall/10.0))
 
-
-    print ("Precision:{}".format(float(local_precision/4)))
-
-    # Printing Recall, recall = true positive / (true positive + false negative)
-
-    correctness = 0
-    total = 0
-    local_correctness = 0
-    local_total = 0
-    local_recall = 0
-    for x_coord in range(0,4):
-        for y_coord in range(0,4):
-            if(x_coord == y_coord):
-                for i in range(0,4):
-                    total += conf[x_coord, i]
-                    local_total += conf[x_coord, i]
-                local_correctness = conf[x_coord, y_coord]
-                correctness += conf[x_coord, y_coord]
-                if(local_total != 0):
-                    recall_total[x_coord] += float(local_correctness)/float(local_total)
-                    local_recall += float(local_correctness)/float(local_total)
-                recall_total_count += 1
-                local_correctness = 0
-                local_total = 0
-
-    print ("Recall:{}".format(float(local_recall/4)))
-
-    print("\n")
-
-correctness = 0
-total = 0
-for x_coord in range(0,4):
-    for y_coord in range(0,4):
-        if x_coord == y_coord:
-            correctness += total_fold_matrix[x_coord, y_coord]
-        total += total_fold_matrix[x_coord, y_coord]
-print ("All folds average accuracy: {}".format((float(correctness)/float(total))))
-
-# Computing all folds average precision
-
-print ("All folds average precision, Jogging: {}".format(float(precision_total[0]/10)))
-print ("All folds average precision, Jumping: {}".format(float(precision_total[1]/10)))
-print ("All folds average precision, Walking: {}".format(float(precision_total[2]/10)))
-print ("All folds average precision, Sitting: {}".format(float(precision_total[3]/10)))
-
-print ("All folds average recall, Jogging: {}".format(float(recall_total[0]/10)))
-print ("All folds average recall, Jumping: {}".format(float(recall_total[1]/10)))
-print ("All folds average recall, Walking: {}".format(float(recall_total[2]/10)))
-print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))
-
+   print("Training decision tree classifier on entire dataset...")
+   tree.fit(X, y)
 # TODO: Evaluate another classifier, i.e. SVM, Logistic Regression, k-NN, etc.
 #######################################################################################################################################################
 # TODO: Once you have collected data, train your best model on the entire
@@ -255,7 +195,7 @@ print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10))
 
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
-svc=svm.LinearSVC()
+"""svc=svm.LinearSVC()
 cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 
 total_fold_matrix = np.array([[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]])
@@ -360,7 +300,7 @@ print ("All folds average precision, Sitting: {}".format(float(precision_total[3
 print ("All folds average recall, Jogging: {}".format(float(recall_total[0]/10)))
 print ("All folds average recall, Jumping: {}".format(float(recall_total[1]/10)))
 print ("All folds average recall, Walking: {}".format(float(recall_total[2]/10)))
-print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))
+print ("All folds average recall, Sitting: {}".format(float(recall_total[3]/10)))"""
 
 # when ready, set this to the best model you found, trained on all the data:
 best_classifier = tree
