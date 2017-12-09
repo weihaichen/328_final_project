@@ -26,23 +26,23 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent" android:background="@color/background_steps">
 
+    <TextView
+        android:id="@+id/txtAccelerometerReading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/ic_step_black" />
+
     <Switch
-        android:id="@+id/switchAccelerometer"
-        android:text="@string/text_switch_accelerometer"
+        android:id="@+id/switchFallDetection"
+        android:text="@string/text_switch_fall_detection"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/txtAccelerometerReading"
-        android:layout_below="@id/switchAccelerometer"
-        android:text="@string/accelerometer_reading_initial"
-        android:textSize="20sp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" />
+
 
     <LinearLayout
         android:id="@+id/layoutAccelerometer"
@@ -131,21 +131,6 @@
     </LinearLayout>
 
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:ap="http://schemas.android.com/apk/res-auto"
-        android:layout_below="@id/layoutAccelerometer"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
 
-        <com.androidplot.xy.XYPlot
-            style="@style/APDefacto.Light"
-            android:id="@+id/accelerometerPlot"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            ap:title="Accelerometer Signal"
-            ap:rangeTitle="m/s^2"
-            ap:lineLabels="left|bottom"
-            ap:lineLabelRotationBottom="-45"/>
-    </LinearLayout>
 
 </RelativeLayout>

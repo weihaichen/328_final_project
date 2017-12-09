@@ -29,13 +29,13 @@
         android:gravity="center"/>
 
     <ImageView
-        tools:ignore="contentDescription"
+        android:id="@+id/icLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/icLogo"
-        android:src="@drawable/ic_umass"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:paddingBottom="10dp"/>
+        android:paddingBottom="10dp"
+        android:src="@drawable/ic_umass"
+        tools:ignore="contentDescription" />
 
 </RelativeLayout>

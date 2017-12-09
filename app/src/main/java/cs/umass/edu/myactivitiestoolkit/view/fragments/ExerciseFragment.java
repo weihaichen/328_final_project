@@ -185,7 +185,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     } else if (message == Constants.MESSAGE.BAND_SERVICE_STOPPED){
                         switchAccelerometer.setChecked(false);
                     }
-                } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACCELEROMETER_DATA)) {
+                } else if (false) {
+                    //intent.getAction().equals(Constants.ACTION.BROADCAST_ACCELEROMETER_DATA)
                     long timestamp = intent.getLongExtra(Constants.KEY.TIMESTAMP, -1);
                     float[] accelerometerValues = intent.getFloatArrayExtra(Constants.KEY.ACCELEROMETER_DATA);
                     displayAccelerometerReading(accelerometerValues[0], accelerometerValues[1], accelerometerValues[2]);
@@ -228,8 +229,12 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     displayServerStepCount(stepCount);
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACTIVITY)) {
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
-                    Log.d(TAG, "Received activity : " + activity);
-                    displayActivity(activity);
+
+                    if(activity.equals(R.string.fall_detection_falling)){
+                        displayActivity("Falling");
+                    }else {
+                        displayActivity("Not Falling");
+                    }
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACCELEROMETER_PEAK)){
                     long timestamp = intent.getLongExtra(Constants.KEY.ACCELEROMETER_PEAK_TIMESTAMP, -1);
 //                    float[] values = intent.getFloatArrayExtra(Constants.KEY.ACCELEROMETER_PEAK_VALUE);
@@ -290,13 +295,13 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 
 
         //obtain references to the on/off switches and handle the toggling appropriately
-        switchAccelerometer = (Switch) view.findViewById(R.id.switchAccelerometer);
+        switchAccelerometer = (Switch) view.findViewById(R.id.switchFallDetection);
         switchAccelerometer.setChecked(mServiceManager.isServiceRunning(AccelerometerService.class));
         switchAccelerometer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean enabled) {
                 if (enabled){
-                    clearPlotData();
+                    //clearPlotData();
 
                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                     boolean runOverMSBand = preferences.getBoolean(getString(R.string.pref_msband_key),
@@ -317,15 +322,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                 }
             }
         });
-
+/*
         // initialize plot and set plot parameters
-        mPlot = (XYPlot) view.findViewById(R.id.accelerometerPlot);
-        mPlot.setRangeBoundaries(-30, 30, BoundaryMode.FIXED);
-        mPlot.setRangeStep(StepMode.SUBDIVIDE, 5);
-        mPlot.getGraph().getDomainOriginLinePaint().setColor(Color.TRANSPARENT);
-        mPlot.getGraph().getDomainGridLinePaint().setColor(Color.TRANSPARENT);
-        mPlot.getGraph().getRangeGridLinePaint().setColor(Color.TRANSPARENT);
-        mPlot.setDomainStep(StepMode.SUBDIVIDE, 1);
 
         // To remove the x labels, just set each label to an empty string:
         mPlot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new Format() {
@@ -360,7 +358,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
         mPlot.addSeries(zSeries, mZSeriesFormatter);
         mPlot.addSeries(peaks, mPeakSeriesFormatter);
         mPlot.redraw();
-
+*/
         return view;
     }
 

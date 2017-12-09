@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         MOTION_DATA(ExerciseFragment.class) {
             @Override
             public String getTitle() {
-                return "My Exercise";
+                return "Fall Detection";
             }
 
             @Override
