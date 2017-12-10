@@ -148,8 +148,8 @@ trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=12))
 for tree_index, tree in enumerate(trees):
 
    total_accuracy = 0.0
-   total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
-   total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+   total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
+   total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
 
    cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
    for i, (train_indexes, test_indexes) in enumerate(cv):
@@ -167,7 +167,7 @@ for tree_index, tree in enumerate(trees):
        y_pred = tree.predict(X_test)
 
        # show the comparison between the predicted and ground-truth labels
-       conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+       conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6,7])
        print conf
        accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
        precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
@@ -199,8 +199,8 @@ print("\n")
 print("---------------------- Support Vector Classifier -------------------------")
 svc=svm.SVC()
 total_accuracy = 0.0
-total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
-total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
+total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
 
 cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 for i, (train_indexes, test_indexes) in enumerate(cv):
@@ -218,7 +218,7 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
     y_pred = svc.predict(X_test)
 
     # show the comparison between the predicted and ground-truth labels
-    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6,7])
     print conf
     accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
     precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
@@ -247,8 +247,8 @@ print("---------------------- RandomForestClassifier -------------------------")
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
 total_accuracy = 0.0
-total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
-total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
+total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0]
 clf = RandomForestClassifier(n_estimators=100)
 cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 for i, (train_indexes, test_indexes) in enumerate(cv):
@@ -266,7 +266,7 @@ for i, (train_indexes, test_indexes) in enumerate(cv):
     y_pred = clf.predict(X_test)
 
     # show the comparison between the predicted and ground-truth labels
-    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6,7])
     print conf
     accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
     precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
