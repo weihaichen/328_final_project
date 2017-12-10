@@ -63,7 +63,7 @@ def predict(window):
     # TODO: Predict class label
 
 
-    x=extract_features(window)
+    x=extract_features(window).reshape(1,-1)
     act=classifier.predict(x)
     if(act[0]==0):
         onActivityDetected("Jogging")
