@@ -8,7 +8,7 @@
   -->
 
 <resources>
-    <string name="app_name">My Activities_final_project</string>
+    <string name="app_name">CS328 Final Project</string>
 
     <string name="accelerometer_reading_format_string" formatted="false">X: %f Y: %f Z: %f </string>
     <string name="accelerometer_reading_initial">X: — Y: — Z: — </string>
@@ -22,6 +22,21 @@
     <string name="ppg_stopped">PPG Stopped.</string>
     <string name="band_started">MS Band Service Started.</string>
     <string name="band_stopped">MS Band Service Stopped.</string>
+
+    <string name="fall_detection_started">Fall Detection Started</string>
+    <string name="fall_detection_ended">Fall Detection Stopped</string>
+    <string name="fall_detection_vibration_started">Vibration Enabled</string>
+    <string name="fall_detection_vibration_stopped">Vibration Disabled</string>
+    <string name="fall_detection_ring_started">Ring Enabled</string>
+    <string name="fall_detection_ring_ended">Ring Disabled</string>
+    <string name="fall_detection_message_started">Messages Enabled</string>
+    <string name="fall_detection_message_ended">Messages Disabled</string>
+    <string name="text_switch_ring">Ring</string>
+    <string name="text_switch_message">Messages</string>
+    <string name="text_switch_vibration">Vibration</string>
+    <string name="fall_detection_falling">Falling</string>
+    <string name="fall_detection_not_falling">Not Falling</string>
+    <string name="divider">一一一一一一一</string>
 
     <string name="action_settings">Settings</string>
 
@@ -46,6 +61,7 @@
     <string name="text_switch_microphone">Microphone</string>
     <string name="text_switch_heart_rate">Photoplethysmography</string>
     <string name="text_switch_gps">Location</string>
+    <string name="text_switch_fall_detection">Fall Detection</string>
 
     <string name="app_details">CS390MB : Mobile Health Sensing</string>
 
