@@ -26,7 +26,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -144,8 +146,12 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     /** Determining Vibration of the app **/
     private boolean vibrate = false;
 
-    /****/
+    /** Determining Ringing of the app **/
     private boolean ring = false;
+
+    /** Determining Messaging of the app **/
+    private boolean message = false;
+
     /**
      * The queue of timestamps.
      */
@@ -183,7 +189,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 
     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     Ringtone r;
-
+    String phoneNumber = "";
     @TargetApi(23)
     private final void initialize(){
         r =  RingtoneManager.getRingtone(getContext(), notification);
@@ -257,10 +263,10 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     displayServerStepCount(stepCount);
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACTIVITY)) {
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
-
+                    //displayActivity(phoneNumber);
                     if(activity.equals("Falling")){
                         displayActivity(activity);
-                        Log.d(TAG, "Falling");
+                        Log.d(TAG, "Phone number" + phoneNumber);
                         final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
                             public void onTick(long millisUntilFinished) {
 
@@ -352,6 +358,36 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 //        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
         initialize();
+
+        Button phone = (Button) view.findViewById(R.id.phoneButton);
+        phone.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                builder.setTitle("Setting Contact");
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                final View dialogView = inflater.inflate(R.layout.dialog, null);
+                builder.setView(dialogView)
+                        // Add action buttons
+                        .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                            @TargetApi(23)
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText phone = (EditText) dialogView.findViewById(R.id.phone);
+                                phoneNumber = phone.getText().toString();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                builder.show();
+            }
+        });
+
         Switch switchVibration = (Switch) view.findViewById(R.id.switchVibration);
         switchVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -376,6 +412,18 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
             }
         });
 
+        Switch switchMessage = (Switch) view.findViewById(R.id.switchMessage);
+        switchMessage.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    message = true;
+                }else{
+                    message = false;
+                }
+            }
+        });
+
         //obtain references to the on/off switches and handle the toggling appropriately
         switchAccelerometer = (Switch) view.findViewById(R.id.switchFallDetection);
         switchAccelerometer.setChecked(mServiceManager.isServiceRunning(AccelerometerService.class));
@@ -396,38 +444,39 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                         mServiceManager.startSensorService(AccelerometerService.class);
                     }
                     /** DEBUG: Testing HERE **/
-                    /*
-                    final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
-                        public void onTick(long millisUntilFinished) {
+/*
+                        Log.d(TAG, "Phone number" + phoneNumber);
+                        final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
+                            public void onTick(long millisUntilFinished) {
 
-                        }
-                        public void onFinish() {
-                            callHelp();
-                        }
-                    };
-                    if(vibrate) vibrate();
-                    if(ring) ring(true);
-                    countdown.start();
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                    alertDialog.setTitle("Are you OK");
-                    alertDialog.setMessage("We have detected that you fell down.");
-                    alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
-                        @Override
-                        public void onClick(DialogInterface dialog, int which){
-                            countdown.cancel();
-                            callHelp();
-                            ring(false);
-                        }
-                    });
-                    alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            countdown.cancel();
-                            ring(false);
-                        }
-                    });
-                    alertDialog.show();
-                    */
+                            }
+                            public void onFinish() {
+                                callHelp();
+                            }
+                        };
+                        if(vibrate) vibrate();
+                        if(ring) ring(true);
+                        countdown.start();
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                        alertDialog.setTitle("Are you OK");
+                        alertDialog.setMessage("We have detected that you fell down.");
+                        alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which){
+                                countdown.cancel();
+                                callHelp();
+                                ring(false);
+                            }
+                        });
+                        alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                countdown.cancel();
+                                ring(false);
+                            }
+                        });
+                        alertDialog.show();
+*/
 
                 }else{
 
@@ -504,9 +553,12 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 
         //String phone = "+16175996860";
         //Intent intent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", phone, null));
+        if(phoneNumber.equals("") || !message){
+            return;
+        }
         final int REQUEST_CODE = 123;
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:----------"));
+        callIntent.setData(Uri.parse("tel:" + phoneNumber));
         if(getContext().checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_DENIED){
             getContext().startActivity(callIntent);
         }else{
