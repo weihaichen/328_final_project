@@ -1,6 +1,10 @@
 package cs.umass.edu.myactivitiestoolkit.services;
 
+import android.app.Activity;
 import android.app.FragmentContainer;
+import android.app.KeyguardManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,13 +13,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.PowerManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,6 +31,7 @@ import cs.umass.edu.myactivitiestoolkit.R;
 import cs.umass.edu.myactivitiestoolkit.constants.Constants;
 import cs.umass.edu.myactivitiestoolkit.steps.StepDetector;
 import cs.umass.edu.myactivitiestoolkit.view.activities.MainActivity;
+import cs.umass.edu.myactivitiestoolkit.view.fragments.ExerciseFragment;
 import edu.umass.cs.MHLClient.client.MessageReceiver;
 import edu.umass.cs.MHLClient.client.MobileIOClient;
 import edu.umass.cs.MHLClient.sensors.AccelerometerReading;
@@ -118,9 +127,14 @@ public class AccelerometerService extends SensorService implements SensorEventLi
     String label = "";
 
 
+
     public AccelerometerService(){
         mStepDetector = new StepDetector();
+
     }
+
+
+
 
     @Override
     protected void onServiceStarted() {
@@ -133,6 +147,7 @@ public class AccelerometerService extends SensorService implements SensorEventLi
 
 //        Log.i(TAG, spinner.getAdapter().)
         Log.i(TAG, "registered spinner listener");
+
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
@@ -380,6 +395,18 @@ public class AccelerometerService extends SensorService implements SensorEventLi
         Intent intent = new Intent();
         intent.putExtra(Constants.KEY.ACTIVITY, activity);
         intent.setAction(Constants.ACTION.BROADCAST_ACTIVITY);
+        if(intent.getExtras().get(Constants.KEY.ACTIVITY).equals("Falling")){
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(getApplicationContext())
+                            .setSmallIcon(R.drawable.heart)
+                            .setContentTitle("Are You OK?")
+                            .setContentText("We Have Detected That You Fell Down.");
+
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
+            if(mBuilder != null){
+                notificationManager.notify(001, mBuilder.build());
+            }
+        }
         LocalBroadcastManager manager = LocalBroadcastManager.getInstance(this);
         manager.sendBroadcast(intent);
     }

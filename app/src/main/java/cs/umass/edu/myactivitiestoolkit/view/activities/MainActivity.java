@@ -1,11 +1,14 @@
 package cs.umass.edu.myactivitiestoolkit.view.activities;
 
+import android.annotation.TargetApi;
 import android.app.Fragment;
+import android.app.KeyguardManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.design.widget.TabLayout;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.content.LocalBroadcastManager;
@@ -49,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     /** used for debugging purposes */
     private static final String TAG = MainActivity.class.getName();
 
+
     /**
      * Defines all available tabs in the main UI. For help on enums,
      * see the <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html">Java documentation</a>.
@@ -59,6 +63,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
      *
      * If you wish to add another tab, e.g. for your final project, just follow the same setup.
      */
+
+
+
+
+
     public enum PAGES {
         MOTION_DATA(ExerciseFragment.class) {
             @Override
@@ -200,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.fragment_exercise, null);
+
         //Spinner spinner = (Spinner)layout.findViewById(R.id.spinner_activity);
         //spinner.setOnItemSelectedListener(this);
     }
@@ -238,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-
+        //createWakeLocks();
         /* Maintains the tabs and the tab layout interactions. */
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new FragmentPagerAdapter(getFragmentManager()) {

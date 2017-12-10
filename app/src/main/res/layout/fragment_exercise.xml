@@ -69,16 +69,15 @@
         </LinearLayout>
 
 
-
     <TextView
         android:id="@+id/txtActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/phoneButton"
+        android:layout_alignRight="@+id/phoneButton"
         android:layout_below="@+id/txtAccelerometerReading"
-        android:layout_marginLeft="68dp"
-        android:layout_marginStart="68dp"
-        android:layout_toEndOf="@+id/txtAccelerometerReading"
-        android:layout_toRightOf="@+id/txtAccelerometerReading"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/activity_initial"
@@ -93,7 +92,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/txtActivity"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="23dp"
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/text_switch_vibration"
@@ -132,14 +131,23 @@
         android:layout_height="wrap_content"
 
         android:layout_below="@+id/switchRing"
-        android:layout_marginLeft="51dp"
-        android:layout_marginStart="51dp"
         android:layout_marginTop="14dp"
         android:layout_toEndOf="@+id/txtAccelerometerReading"
         android:layout_toRightOf="@+id/txtAccelerometerReading"
         android:text="Phone Number" />
         <!--android:drawableStart="@drawable/ic_running_black_48dp"-->
+    <Button
+        android:id="@+id/durationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
 
+        android:layout_alignBaseline="@+id/phoneButton"
+        android:layout_alignBottom="@+id/phoneButton"
+        android:layout_marginLeft="27dp"
+        android:layout_marginStart="27dp"
+        android:layout_toEndOf="@+id/phoneButton"
+        android:layout_toRightOf="@+id/phoneButton"
+        android:text="Duration" />
 
 
 

@@ -2,9 +2,11 @@ package cs.umass.edu.myactivitiestoolkit.view.fragments;
 
 import android.Manifest;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,10 +22,13 @@ import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -101,6 +106,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     @SuppressWarnings("unused")
     private static final String TAG = ExerciseFragment.class.getName();
 
+
+
     /** The switch which toggles the {@link AccelerometerService}. **/
     private Switch switchAccelerometer;
 
@@ -152,6 +159,12 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     /** Determining Messaging of the app **/
     private boolean message = false;
 
+    /** Determining Duration of the AlertDialog
+     *      Default as 15 seconds or 15000 milliseconds
+     * **/
+    private int durationTime = 15000;
+
+
     /**
      * The queue of timestamps.
      */
@@ -190,6 +203,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
     Ringtone r;
     String phoneNumber = "";
+
+    Window window;
     @TargetApi(23)
     private final void initialize(){
         r =  RingtoneManager.getRingtone(getContext(), notification);
@@ -263,11 +278,17 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     displayServerStepCount(stepCount);
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACTIVITY)) {
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
-                    //displayActivity(phoneNumber);
+
                     if(activity.equals("Falling")){
+                        NotificationCompat.Builder mBuilder =
+                                new NotificationCompat.Builder(getActivity())
+                                        .setSmallIcon(R.drawable.heart)
+                                        .setContentTitle("Are You OK?")
+                                        .setContentText("We Have Detected That You Fell Down.");
+
                         displayActivity(activity);
                         Log.d(TAG, "Phone number" + phoneNumber);
-                        final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
+                        final CountDownTimer countdown = new CountDownTimer(durationTime, 1000) {
                             public void onTick(long millisUntilFinished) {
 
                             }
@@ -297,6 +318,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             }
                         });
                         alertDialog.show();
+
                     }else {
                         displayActivity(activity);
                     }
@@ -312,6 +334,10 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
             }
         }
     };
+
+
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -358,7 +384,34 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 //        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
         initialize();
-
+        Button duration = (Button) view.findViewById(R.id.durationButton);
+        duration.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                // Get the layout inflater
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                builder.setTitle("Setting Popup Duration");
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                final View dialogView = inflater.inflate(R.layout.dialog_duration, null);
+                builder.setView(dialogView)
+                        // Add action buttons
+                        .setPositiveButton("Enter", new DialogInterface.OnClickListener() {
+                            @TargetApi(23)
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                EditText duration = (EditText) dialogView.findViewById(R.id.duration);
+                                durationTime = Integer.parseInt(duration.getText().toString())*1000;
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        });
+                builder.show();
+            }
+        });
         Button phone = (Button) view.findViewById(R.id.phoneButton);
         phone.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -442,6 +495,9 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                         mServiceManager.startSensorService(BandService.class);
                     }else {
                         mServiceManager.startSensorService(AccelerometerService.class);
+                        //Intent serviceIntent = new Intent(getActivity(), AccelerometerService.class);
+
+                        //mServiceManager.startSensorService(serviceIntent);
                     }
                     /** DEBUG: Testing HERE **/
 /*
@@ -530,19 +586,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     }
     @TargetApi(23)
     public void ring(boolean play){
-
         if(play){
             r.play();
-            /*
-            CountDownTimer countdown = new CountDownTimer(15000, 1000) {
-                public void onTick(long millisUntilFinished) {
-                }
-                public void onFinish() {
-                    r.stop();
-                }
-            };
-            countdown.start();*/
-
         }else{
             r.stop();
         }
@@ -580,6 +625,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
             v.vibrate(1000);
         }
     }
+
+
     /**
      * When the fragment starts, register a {@link #receiver} to receive messages from the
      * {@link AccelerometerService}. The intent filter defines messages we are interested in receiving.
@@ -616,6 +663,16 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
         filter.addAction(Constants.ACTION.BROADCAST_LOCAL_STEP_COUNT);
         filter.addAction(Constants.ACTION.BROADCAST_SERVER_STEP_COUNT);
         broadcastManager.registerReceiver(receiver, filter);
+        window = getActivity().getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON |
+                WindowManager.LayoutParams.FLAG_FULLSCREEN |
+                WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+
 
 //        //labels spinner
 //        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);

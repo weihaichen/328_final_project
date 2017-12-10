@@ -1,5 +1,6 @@
 package cs.umass.edu.myactivitiestoolkit.services;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Context;
@@ -50,6 +51,7 @@ public class ServiceManager {
         Intent startServiceIntent = new Intent(context, serviceClass);
         startServiceIntent.setAction(Constants.ACTION.START_SERVICE);
         context.startService(startServiceIntent);
+
     }
 
     /**
