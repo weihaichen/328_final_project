@@ -13,6 +13,8 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
@@ -139,6 +141,11 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
      * {@link #GRAPH_CAPACITY} before the plot is fully populated. **/
     private int mNumberOfPoints = 0;
 
+    /** Determining Vibration of the app **/
+    private boolean vibrate = false;
+
+    /****/
+    private boolean ring = false;
     /**
      * The queue of timestamps.
      */
@@ -173,6 +180,14 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     private ServiceManager mServiceManager;
 
     Spinner spinner;
+
+    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+    Ringtone r;
+
+    @TargetApi(23)
+    private final void initialize(){
+        r =  RingtoneManager.getRingtone(getContext(), notification);
+    }
 
     /**
      * The receiver listens for messages from the {@link AccelerometerService}, e.g. was the
@@ -321,7 +336,30 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 //        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 //        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
+        initialize();
+        Switch switchVibration = (Switch) view.findViewById(R.id.switchVibration);
+        switchVibration.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    vibrate = true;
+                }else{
+                    vibrate = false;
+                }
+            }
+        });
 
+        Switch switchRingtone = (Switch) view.findViewById(R.id.switchRing);
+        switchRingtone.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    ring = true;
+                }else{
+                    ring = false;
+                }
+            }
+        });
 
         //obtain references to the on/off switches and handle the toggling appropriately
         switchAccelerometer = (Switch) view.findViewById(R.id.switchFallDetection);
@@ -350,7 +388,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             callHelp();
                         }
                     };
-                    vibrate();
+                    if(vibrate) vibrate();
+                    if(ring) ring(true);
                     countdown.start();
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                     alertDialog.setTitle("Are you OK");
@@ -359,13 +398,15 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                         @Override
                         public void onClick(DialogInterface dialog, int which){
                             countdown.cancel();
-                            //callHelp();
+                            callHelp();
+                            ring(false);
                         }
                     });
                     alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             countdown.cancel();
+                            ring(false);
                         }
                     });
                     alertDialog.show();
@@ -420,6 +461,26 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 */
         return view;
     }
+    @TargetApi(23)
+    public void ring(boolean play){
+
+        if(play){
+            r.play();
+            /*
+            CountDownTimer countdown = new CountDownTimer(15000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                }
+                public void onFinish() {
+                    r.stop();
+                }
+            };
+            countdown.start();*/
+
+        }else{
+            r.stop();
+        }
+    }
+
     @TargetApi(23)
     public void callHelp(){
 
