@@ -200,8 +200,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.fragment_exercise, null);
-        Spinner spinner = (Spinner)layout.findViewById(R.id.spinner_activity);
-        spinner.setOnItemSelectedListener(this);
+        //Spinner spinner = (Spinner)layout.findViewById(R.id.spinner_activity);
+        //spinner.setOnItemSelectedListener(this);
     }
 
     @Override

@@ -54,6 +54,8 @@ import cs.umass.edu.myactivitiestoolkit.services.msband.BandService;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 import android.net.Uri;
+import android.os.Vibrator;
+
 
 /**
  * Fragment which visualizes the 3-axis accelerometer signal, displays the step count estimates and
@@ -182,6 +184,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
      * built-in and local step detection algorithms. You may display the step count in
      * {@link #txtServerStepCount}.
      */
+
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -241,6 +244,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 
                     if(activity.equals(R.string.fall_detection_falling)){
                         displayActivity("Falling");
+
                         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
                         alertDialog.setTitle("Are you OK");
                         alertDialog.setMessage("We have detected that you fell down.");
@@ -346,6 +350,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             callHelp();
                         }
                     };
+                    vibrate();
                     countdown.start();
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                     alertDialog.setTitle("Are you OK");
@@ -354,7 +359,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                         @Override
                         public void onClick(DialogInterface dialog, int which){
                             countdown.cancel();
-                            callHelp();
+                            //callHelp();
                         }
                     });
                     alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
@@ -417,6 +422,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     }
     @TargetApi(23)
     public void callHelp(){
+
         //String phone = "+16175996860";
         //Intent intent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", phone, null));
         final int REQUEST_CODE = 123;
@@ -429,6 +435,19 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
             getContext().startActivity(callIntent);
         }
 
+    }
+    @TargetApi(23)
+    public void vibrate(){
+        final int REQUEST_CODE = 213;
+        Vibrator v = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+        if(getContext().checkSelfPermission(Manifest.permission.VIBRATE)!= PackageManager.PERMISSION_DENIED){
+
+            // Vibrate for 500 milliseconds
+            v.vibrate(1000);
+        }else{
+            getActivity().requestPermissions(new String[]{Manifest.permission.VIBRATE},REQUEST_CODE);
+            v.vibrate(1000);
+        }
     }
     /**
      * When the fragment starts, register a {@link #receiver} to receive messages from the
