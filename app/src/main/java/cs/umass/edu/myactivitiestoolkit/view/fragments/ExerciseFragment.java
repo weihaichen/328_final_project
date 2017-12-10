@@ -280,14 +280,9 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
 
                     if(activity.equals("Falling")){
-                        NotificationCompat.Builder mBuilder =
-                                new NotificationCompat.Builder(getActivity())
-                                        .setSmallIcon(R.drawable.heart)
-                                        .setContentTitle("Are You OK?")
-                                        .setContentText("We Have Detected That You Fell Down.");
 
                         displayActivity(activity);
-                        Log.d(TAG, "Phone number" + phoneNumber);
+
                         final CountDownTimer countdown = new CountDownTimer(durationTime, 1000) {
                             public void onTick(long millisUntilFinished) {
 

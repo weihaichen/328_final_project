@@ -30,8 +30,14 @@
         android:id="@+id/txtAccelerometerReading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:background="@drawable/ic_step_black" />
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="11dp"
+        android:layout_toEndOf="@+id/layout_step_count"
+        android:layout_toRightOf="@+id/layout_step_count"
+        android:background="@drawable/ic_walking_black_48dp"
+        android:gravity="center" />
 
     <Switch
         android:id="@+id/switchFallDetection"
@@ -73,17 +79,27 @@
         android:id="@+id/txtActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/phoneButton"
-        android:layout_alignRight="@+id/phoneButton"
         android:layout_below="@+id/txtAccelerometerReading"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="55dp"
+        android:layout_marginStart="55dp"
+        android:layout_toEndOf="@+id/txtAccelerometerReading"
+        android:layout_toRightOf="@+id/txtAccelerometerReading"
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/activity_initial"
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="20sp" />
 
+    <TextView
+        android:id="@+id/txtFall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/switchMessage"
+        android:layout_alignBottom="@+id/switchMessage"
+        android:layout_alignLeft="@+id/txtAccelerometerReading"
+        android:layout_alignStart="@+id/txtAccelerometerReading"
+        android:background="@drawable/heart"
+        android:gravity="center" />
     <Switch
         android:id="@+id/switchVibration"
         android:layout_width="match_parent"
