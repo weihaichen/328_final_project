@@ -83,7 +83,7 @@ n_samples = 1000
 time_elapsed_seconds = (data[n_samples,0] - data[0,0]) / 1000
 sampling_rate = n_samples / time_elapsed_seconds
 
-feature_names = ["mean X", "mean Y", "mean Z","Variance X","Variance Y", "Variance Z","ZCR","Magnitude-signal","Xfft","Yfft","Zfft","Entropy"]
+feature_names = ["mean X", "mean Y", "mean Z","Variance X","Variance Y", "Variance Z","ZCR","Magnitude-signal","Xfft","Yfft","Zfft","Entropy","Acceleration"]
 
 class_names = ["Jogging", "Jumping","Walking","Sitting","Falling","Sitting Down","Squating","Dropping Phone"]
 

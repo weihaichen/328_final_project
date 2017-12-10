@@ -8,7 +8,7 @@
 /build
 /captures
 .externalNativeBuild
-
+*.pickle
 =======
 >>>>>>> 696d7350b270d75b2f0bf6c454b090e814941bf3
 # Built application files
