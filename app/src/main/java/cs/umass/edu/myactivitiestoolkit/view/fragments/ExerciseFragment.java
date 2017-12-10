@@ -201,6 +201,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
      */
 
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @TargetApi(23)
         @Override
         public void onReceive(Context context, Intent intent) {
             // TODO: (Assignment 1) Display the step count as predicted by your server-side algorithm, when a step event occurs
@@ -257,27 +258,41 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACTIVITY)) {
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
 
-                    if(activity.equals(R.string.fall_detection_falling)){
-                        displayActivity("Falling");
+                    if(activity.equals("Falling")){
+                        displayActivity(activity);
+                        Log.d(TAG, "Falling");
+                        final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
+                            public void onTick(long millisUntilFinished) {
 
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                            }
+                            public void onFinish() {
+                                callHelp();
+                            }
+                        };
+                        if(vibrate) vibrate();
+                        if(ring) ring(true);
+                        countdown.start();
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                         alertDialog.setTitle("Are you OK");
                         alertDialog.setMessage("We have detected that you fell down.");
                         alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
                             @Override
                             public void onClick(DialogInterface dialog, int which){
-
+                                countdown.cancel();
+                                callHelp();
+                                ring(false);
                             }
                         });
                         alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
+                                countdown.cancel();
+                                ring(false);
                             }
                         });
                         alertDialog.show();
                     }else {
-                        displayActivity("Not Falling");
+                        displayActivity(activity);
                     }
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACCELEROMETER_PEAK)){
                     long timestamp = intent.getLongExtra(Constants.KEY.ACCELEROMETER_PEAK_TIMESTAMP, -1);
@@ -380,6 +395,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     }else {
                         mServiceManager.startSensorService(AccelerometerService.class);
                     }
+                    /** DEBUG: Testing HERE **/
+                    /*
                     final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
                         public void onTick(long millisUntilFinished) {
 
@@ -410,6 +427,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                         }
                     });
                     alertDialog.show();
+                    */
 
                 }else{
 
