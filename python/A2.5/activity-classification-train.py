@@ -31,6 +31,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn import svm
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from features import extract_features # make sure features.py is in the same directory
 from util import slidingWindow, reorient, reset_vars
 from sklearn import cross_validation
@@ -138,15 +140,16 @@ print("\n")
 print("---------------------- Decision Tree -------------------------")
 
 trees = [] # various decision tree classifiers
-trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=3))
-trees.append(DecisionTreeClassifier(criterion="gini", max_depth=3))
-trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=12))
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=4))
+trees.append(DecisionTreeClassifier(criterion="gini", max_depth=5))
 trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=6))
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=7))
+trees.append(DecisionTreeClassifier(criterion="entropy", max_depth=8))
 for tree_index, tree in enumerate(trees):
 
    total_accuracy = 0.0
-   total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0]
-   total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0]
+   total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+   total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
 
    cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
    for i, (train_indexes, test_indexes) in enumerate(cv):
@@ -164,8 +167,8 @@ for tree_index, tree in enumerate(trees):
        y_pred = tree.predict(X_test)
 
        # show the comparison between the predicted and ground-truth labels
-       conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5])
-
+       conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+       print conf
        accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
        precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
        recall = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=0).astype(float))
@@ -192,9 +195,143 @@ for tree_index, tree in enumerate(trees):
 # TODO: Once you have collected data, train your best model on the entire
 # dataset. Then save it to disk as follows:
 
+print("\n")
+print("---------------------- Support Vector Classifier -------------------------")
+svc=svm.SVC()
+total_accuracy = 0.0
+total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
 
+cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
+for i, (train_indexes, test_indexes) in enumerate(cv):
+    X_train = X[train_indexes, :]
+    y_train = y[train_indexes]
+    X_test = X[test_indexes, :]
+    y_test = y[test_indexes]
+
+    print("Fold {} : Training decision tree classifier over {} points...".format(i, len(y_train)))
+    sys.stdout.flush()
+    svc.fit(X_train, y_train)
+    print("Evaluating classifier over {} points...".format(len(y_test)))
+
+    # predict the labels on the test data
+    y_pred = svc.predict(X_test)
+
+    # show the comparison between the predicted and ground-truth labels
+    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+    print conf
+    accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
+    precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
+    recall = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=0).astype(float))
+
+    total_accuracy += accuracy
+    total_precision += precision
+    total_recall += recall
+
+    print("The accuracy is {}".format(accuracy))
+    print("The precision is {}".format(precision))
+    print("The recall is {}".format(recall))
+
+    print("\n")
+    sys.stdout.flush()
+
+print("The average accuracy is {}".format(total_accuracy/10.0))
+print("The average precision is {}".format(total_precision/10.0))
+print("The average recall is {}".format(total_recall/10.0))
+
+print("Training decision tree classifier on entire dataset...")
+
+
+print("\n")
+print("---------------------- RandomForestClassifier -------------------------")
 # TODO: Train and evaluate your decision tree classifier over 10-fold CV.
 # Report average accuracy, precision and recall metrics.
+total_accuracy = 0.0
+total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+clf = RandomForestClassifier(n_estimators=100)
+cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
+for i, (train_indexes, test_indexes) in enumerate(cv):
+    X_train = X[train_indexes, :]
+    y_train = y[train_indexes]
+    X_test = X[test_indexes, :]
+    y_test = y[test_indexes]
+
+    print("Fold {} : Training decision tree classifier over {} points...".format(i, len(y_train)))
+    sys.stdout.flush()
+    clf.fit(X_train, y_train)
+    print("Evaluating classifier over {} points...".format(len(y_test)))
+
+    # predict the labels on the test data
+    y_pred = clf.predict(X_test)
+
+    # show the comparison between the predicted and ground-truth labels
+    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+    print conf
+    accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
+    precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
+    recall = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=0).astype(float))
+
+    total_accuracy += accuracy
+    total_precision += precision
+    total_recall += recall
+
+    print("The accuracy is {}".format(accuracy))
+    print("The precision is {}".format(precision))
+    print("The recall is {}".format(recall))
+
+    print("\n")
+    sys.stdout.flush()
+
+print("The average accuracy is {}".format(total_accuracy/10.0))
+print("The average precision is {}".format(total_precision/10.0))
+print("The average recall is {}".format(total_recall/10.0))
+
+print("\n")
+print("---------------------- LogisticRegression -------------------------")
+# TODO: Train and evaluate your decision tree classifier over 10-fold CV.
+# Report average accuracy, precision and recall metrics.
+total_accuracy = 0.0
+total_precision = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+total_recall = [0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0]
+lr = LogisticRegression()
+cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
+for i, (train_indexes, test_indexes) in enumerate(cv):
+    X_train = X[train_indexes, :]
+    y_train = y[train_indexes]
+    X_test = X[test_indexes, :]
+    y_test = y[test_indexes]
+
+    print("Fold {} : Training decision tree classifier over {} points...".format(i, len(y_train)))
+    sys.stdout.flush()
+    lr.fit(X_train, y_train)
+    print("Evaluating classifier over {} points...".format(len(y_test)))
+
+    # predict the labels on the test data
+    y_pred = lr.predict(X_test)
+
+    # show the comparison between the predicted and ground-truth labels
+    conf = confusion_matrix(y_test, y_pred, labels=[0,1,2,3,4,5,6])
+    print conf
+    accuracy = np.sum(np.diag(conf)) / float(np.sum(conf))
+    precision = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=1).astype(float))
+    recall = np.nan_to_num(np.diag(conf) / np.sum(conf, axis=0).astype(float))
+
+    total_accuracy += accuracy
+    total_precision += precision
+    total_recall += recall
+
+    print("The accuracy is {}".format(accuracy))
+    print("The precision is {}".format(precision))
+    print("The recall is {}".format(recall))
+
+    print("\n")
+    sys.stdout.flush()
+
+print("The average accuracy is {}".format(total_accuracy/10.0))
+print("The average precision is {}".format(total_precision/10.0))
+print("The average recall is {}".format(total_recall/10.0))
+
 """svc=svm.LinearSVC()
 cv = cross_validation.KFold(n, n_folds=10, shuffle=True, random_state=None)
 

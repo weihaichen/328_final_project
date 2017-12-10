@@ -75,8 +75,20 @@ def predict(window):
         onActivityDetected("Walking")
         print("Walking")
     if(act[0]==3):
-        onActivityDetected("Sitting")
-        print("Sitting")
+        onActivityDetected("Stationary")
+        print("Stationary")
+    if(act[0]==4):
+        onActivityDetected("Falling")
+        print("Falling")
+    if(act[0]==5):
+        onActivityDetected("Sitting Down")
+        print("Sitting Down")
+    if(act[0]==6):
+        onActivityDetected("Squating")
+        print("Squating")
+    if(act[0]==7):
+        onActivityDetected("Dropping Phone")
+        print("Dropping Phone")
     return
 
 #################   Server Connection Code  ####################
