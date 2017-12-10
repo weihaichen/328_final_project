@@ -506,7 +506,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
         //Intent intent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", phone, null));
         final int REQUEST_CODE = 123;
         Intent callIntent = new Intent(Intent.ACTION_CALL);
-        callIntent.setData(Uri.parse("tel:6175996860"));
+        callIntent.setData(Uri.parse("tel:----------"));
         if(getContext().checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_DENIED){
             getContext().startActivity(callIntent);
         }else{
