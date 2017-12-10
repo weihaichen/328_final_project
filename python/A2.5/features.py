@@ -4,12 +4,12 @@ Created on Tue Sep 27 13:08:49 2016
 
 @author: cs390mb
 
-This file is used for extracting features over windows of tri-axial accelerometer 
-data. We recommend using helper functions like _compute_mean_features(window) to 
+This file is used for extracting features over windows of tri-axial accelerometer
+data. We recommend using helper functions like _compute_mean_features(window) to
 extract individual features.
 
-As a side note, the underscore at the beginning of a function is a Python 
-convention indicating that the function has private access (although in reality 
+As a side note, the underscore at the beginning of a function is a Python
+convention indicating that the function has private access (although in reality
 it is still publicly accessible).
 
 """
@@ -51,6 +51,20 @@ def _computer_entropy(window):
     entropy = [ -p * math.log(abs(p)) for p in hist2]
     return np.sum(entropy)
 
+def _compute_acceleration(window):
+    x = window[:, 0]
+    y = window[:, 1]
+    z = window[:, 2]
+    I = _distance(x[0],x[1],y[0],y[1],z[0],z[1])
+    S = 0.0
+    for i in range(19):
+        S = S + _distance(x[i],x[i+1],y[i],y[i+1],z[i],z[i+1])
+    A = 2*(S - I*19.00)/361.00
+    return A
+
+def _distance(x1,x2,y1,y2,z1,z2):
+    return math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)
+
 def extract_features(window):
     """
     Here is where you will extract your features from the data over
@@ -63,11 +77,11 @@ def extract_features(window):
     """
 
     x = []
-
     x = np.append(x, _compute_mean_features(window))
     x = np.append(x, _compute_variance_feature(window))
     x = np.append(x, _compute_zerocrossingrate_feature(window))
     x = np.append(x, _compute_magnitudesignal(window))
     x = np.append(x, _compute_FFT(window))
     x = np.append(x, _computer_entropy(window))
+    x = np.append(x, _compute_acceleration(window))
     return x
