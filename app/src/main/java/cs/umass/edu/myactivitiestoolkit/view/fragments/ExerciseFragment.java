@@ -107,7 +107,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     private static final String TAG = ExerciseFragment.class.getName();
 
 
-
+    private int fallingcount = 0;
     /** The switch which toggles the {@link AccelerometerService}. **/
     private Switch switchAccelerometer;
 
@@ -280,43 +280,52 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
 
                     if(activity.equals("Falling")){
+                        if(fallingcount > 0) {
+                            fallingcount = 0;
+                            displayActivity(activity);
 
-                        displayActivity(activity);
+                            final CountDownTimer countdown = new CountDownTimer(durationTime, 1000) {
+                                public void onTick(long millisUntilFinished) {
 
-                        final CountDownTimer countdown = new CountDownTimer(durationTime, 1000) {
-                            public void onTick(long millisUntilFinished) {
+                                }
 
-                            }
-                            public void onFinish() {
-                                callHelp();
-                            }
-                        };
-                        if(vibrate) vibrate();
-                        if(ring) ring(true);
-                        countdown.start();
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                        alertDialog.setTitle("Are you OK");
-                        alertDialog.setMessage("We have detected that you fell down.");
-                        alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
-                            @Override
-                            public void onClick(DialogInterface dialog, int which){
-                                countdown.cancel();
-                                callHelp();
-                                ring(false);
-                            }
-                        });
-                        alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                countdown.cancel();
-                                ring(false);
-                            }
-                        });
-                        alertDialog.show();
+                                public void onFinish() {
+                                    callHelp();
+                                }
+                            };
+                            if (vibrate) vibrate();
+                            if (ring) ring(true);
+                            countdown.start();
+                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                            alertDialog.setTitle("Are you OK");
+                            alertDialog.setMessage("We have detected that you fell down.");
+                            alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    countdown.cancel();
+                                    callHelp();
+                                    ring(false);
+                                }
+                            });
+                            alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    countdown.cancel();
+                                    ring(false);
+                                }
+                            });
+                            alertDialog.show();
+                        }
+                        else{
+                            fallingcount ++;
+                        }
+                    }
 
-                    }else {
+                    else {
+                        fallingcount = 0;
                         displayActivity(activity);
                     }
+
                 } else if (intent.getAction().equals(Constants.ACTION.BROADCAST_ACCELEROMETER_PEAK)){
                     long timestamp = intent.getLongExtra(Constants.KEY.ACCELEROMETER_PEAK_TIMESTAMP, -1);
 //                    float[] values = intent.getFloatArrayExtra(Constants.KEY.ACCELEROMETER_PEAK_VALUE);
