@@ -1,13 +1,20 @@
 package cs.umass.edu.myactivitiestoolkit.view.fragments;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,6 +37,7 @@ import com.androidplot.xy.StepMode;
 import com.androidplot.xy.XYGraphWidget;
 import com.androidplot.xy.XYPlot;
 
+import java.lang.annotation.Target;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
@@ -45,6 +53,7 @@ import cs.umass.edu.myactivitiestoolkit.services.ServiceManager;
 import cs.umass.edu.myactivitiestoolkit.services.msband.BandService;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
+import android.net.Uri;
 
 /**
  * Fragment which visualizes the 3-axis accelerometer signal, displays the step count estimates and
@@ -232,6 +241,22 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 
                     if(activity.equals(R.string.fall_detection_falling)){
                         displayActivity("Falling");
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+                        alertDialog.setTitle("Are you OK");
+                        alertDialog.setMessage("We have detected that you fell down.");
+                        alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
+                            @Override
+                            public void onClick(DialogInterface dialog, int which){
+
+                            }
+                        });
+                        alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        alertDialog.show();
                     }else {
                         displayActivity("Not Falling");
                     }
@@ -297,8 +322,10 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
         //obtain references to the on/off switches and handle the toggling appropriately
         switchAccelerometer = (Switch) view.findViewById(R.id.switchFallDetection);
         switchAccelerometer.setChecked(mServiceManager.isServiceRunning(AccelerometerService.class));
+
         switchAccelerometer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
+            @TargetApi(23)
             public void onCheckedChanged(CompoundButton compoundButton, boolean enabled) {
                 if (enabled){
                     //clearPlotData();
@@ -308,9 +335,36 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             getResources().getBoolean(R.bool.pref_msband_default));
                     if (runOverMSBand){
                         mServiceManager.startSensorService(BandService.class);
-                    }else{
+                    }else {
                         mServiceManager.startSensorService(AccelerometerService.class);
                     }
+                    final CountDownTimer countdown = new CountDownTimer(15000, 1000) {
+                        public void onTick(long millisUntilFinished) {
+
+                        }
+                        public void onFinish() {
+                            callHelp();
+                        }
+                    };
+                    countdown.start();
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
+                    alertDialog.setTitle("Are you OK");
+                    alertDialog.setMessage("We have detected that you fell down.");
+                    alertDialog.setPositiveButton("I need help!", new DialogInterface.OnClickListener(){
+                        @Override
+                        public void onClick(DialogInterface dialog, int which){
+                            countdown.cancel();
+                            callHelp();
+                        }
+                    });
+                    alertDialog.setNegativeButton("I'm Fine!", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            countdown.cancel();
+                        }
+                    });
+                    alertDialog.show();
+
                 }else{
 
                     Log.d(TAG, "found spinner");
@@ -361,7 +415,21 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
 */
         return view;
     }
+    @TargetApi(23)
+    public void callHelp(){
+        //String phone = "+16175996860";
+        //Intent intent = new Intent(Intent.ACTION_CALL, Uri.fromParts("tel", phone, null));
+        final int REQUEST_CODE = 123;
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:6175996860"));
+        if(getContext().checkSelfPermission(Manifest.permission.CALL_PHONE)!= PackageManager.PERMISSION_DENIED){
+            getContext().startActivity(callIntent);
+        }else{
+            getActivity().requestPermissions(new String[]{Manifest.permission.CALL_PHONE},REQUEST_CODE);
+            getContext().startActivity(callIntent);
+        }
 
+    }
     /**
      * When the fragment starts, register a {@link #receiver} to receive messages from the
      * {@link AccelerometerService}. The intent filter defines messages we are interested in receiving.
