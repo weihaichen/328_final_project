@@ -75,7 +75,7 @@ data = np.append(reoriented_data_with_timestamps, data[:,-1:], axis=1)
 
 # you may want to play around with the window and step sizes
 #default window_size = 100, step_size = 100
-window_size = 20
+window_size = 100
 step_size = 20
 
 # sampling rate for the sample data should be about 25 Hz; take a brief window to confirm this
@@ -83,7 +83,7 @@ n_samples = 1000
 time_elapsed_seconds = (data[n_samples,0] - data[0,0]) / 1000
 sampling_rate = n_samples / time_elapsed_seconds
 
-feature_names = ["mean X", "mean Y", "mean Z","Variance X","Variance Y", "Variance Z","ZCR","Magnitude-signal","Xfft","Yfft","Zfft","Entropy","Acceleration"]
+feature_names = ["mean X", "mean Y", "mean Z","Variance X","Variance Y", "Variance Z","ZCR","Magnitude-signal","Xfft","Yfft","Zfft","Entropy","XAcceleration","YAcceleration","ZAcceleration"]
 
 class_names = ["Jogging", "Jumping","Walking","Sitting","Falling","Sitting Down","Squating","Dropping Phone"]
 

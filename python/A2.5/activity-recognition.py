@@ -66,15 +66,19 @@ def predict(window):
     x=extract_features(window).reshape(1,-1)
     act=classifier.predict(x)
     if(act[0]==0):
+        fallingcount = 0 
         onActivityDetected("Jogging")
         print("Jogging")
     if(act[0]==1):
+        fallingcount = 0 
         onActivityDetected("Jumping")
         print("Jumping")
     if(act[0]==2):
+        fallingcount = 0 
         onActivityDetected("Walking")
         print("Walking")
     if(act[0]==3):
+        fallingcount = 0 
         onActivityDetected("Stationary")
         print("Stationary")
     if(act[0]==4):
@@ -85,12 +89,15 @@ def predict(window):
         else:
             fallingcount+=1
     if(act[0]==5):
+        fallingcount = 0 
         onActivityDetected("Sitting Down")
         print("Sitting Down")
     if(act[0]==6):
+        fallingcount = 0 
         onActivityDetected("Squating")
         print("Squating")
     if(act[0]==7):
+        fallingcount = 0 
         onActivityDetected("Dropping Phone")
         print("Dropping Phone")
     return
