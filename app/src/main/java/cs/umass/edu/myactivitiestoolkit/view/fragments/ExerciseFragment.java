@@ -407,6 +407,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText duration = (EditText) dialogView.findViewById(R.id.duration);
                                 durationTime = Integer.parseInt(duration.getText().toString())*1000;
+                                TextView txtDuration = (TextView) view.findViewById(R.id.txtDuration);
+                                txtDuration.setText(duration.getText());
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -435,6 +437,8 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                             public void onClick(DialogInterface dialog, int id) {
                                 EditText phone = (EditText) dialogView.findViewById(R.id.phone);
                                 phoneNumber = phone.getText().toString();
+                                TextView txtPhoneNumber = (TextView) view.findViewById(R.id.txtPhoneNumber);
+                                txtPhoneNumber.setText(phoneNumber);
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {

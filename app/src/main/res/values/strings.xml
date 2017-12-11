@@ -37,7 +37,10 @@
     <string name="fall_detection_falling">Falling</string>
     <string name="fall_detection_not_falling">Not Falling</string>
     <string name="phoneNumber">Phone Number</string>
-    <string name="phone"></string>
+    <string name="phone_initial">xxx-xxx-xxxx</string>
+
+    <string name="number">Number(In seconds)</string>
+    <string name="duration">15</string>
 
     <string name="action_settings">Settings</string>
 
