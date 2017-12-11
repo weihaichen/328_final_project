@@ -30,10 +30,9 @@
         android:id="@+id/txtAccelerometerReading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/layout_step_count"
         android:layout_marginLeft="20dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="11dp"
         android:layout_toEndOf="@+id/layout_step_count"
         android:layout_toRightOf="@+id/layout_step_count"
         android:background="@drawable/ic_walking_black_48dp"
@@ -90,16 +89,7 @@
         android:textColor="@android:color/holo_blue_dark"
         android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/txtFall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/switchMessage"
-        android:layout_alignBottom="@+id/switchMessage"
-        android:layout_alignLeft="@+id/txtAccelerometerReading"
-        android:layout_alignStart="@+id/txtAccelerometerReading"
-        android:background="@drawable/heart"
-        android:gravity="center" />
+
     <Switch
         android:id="@+id/switchVibration"
         android:layout_width="match_parent"
@@ -146,10 +136,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
+        android:layout_alignLeft="@+id/txtAccelerometerReading"
+        android:layout_alignStart="@+id/txtAccelerometerReading"
         android:layout_below="@+id/switchRing"
-        android:layout_marginTop="14dp"
-        android:layout_toEndOf="@+id/txtAccelerometerReading"
-        android:layout_toRightOf="@+id/txtAccelerometerReading"
+        android:layout_marginLeft="30dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="17dp"
         android:text="Phone Number" />
         <!--android:drawableStart="@drawable/ic_running_black_48dp"-->
     <Button
@@ -165,6 +157,35 @@
         android:layout_toRightOf="@+id/phoneButton"
         android:text="Duration" />
 
+    <TextView
+        android:id="@+id/txtPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneButton"
+        android:layout_marginTop="17dp"
+        android:layout_toEndOf="@+id/txtAccelerometerReading"
+        android:layout_toRightOf="@+id/txtAccelerometerReading"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/phone_initial"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/txtDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtPhoneNumber"
+        android:layout_alignBottom="@+id/txtPhoneNumber"
+        android:layout_marginLeft="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_toEndOf="@+id/txtActivity"
+        android:layout_toRightOf="@+id/txtActivity"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/duration"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textSize="20sp" />
 
 
 </RelativeLayout>
