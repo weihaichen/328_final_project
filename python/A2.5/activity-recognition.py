@@ -25,7 +25,7 @@ from util import reorient, reset_vars
 user_id = "s72gmq9cfzhbuz9f"
 
 count = 0
-
+fallingcount = 0
 '''
     This socket is used to send data back through the data collection server.
     It is used to complete the authentication. It may also be used to send
@@ -61,32 +61,43 @@ def predict(window):
     print("Buffer filled. Run your classifier.")
 
     # TODO: Predict class label
-
+    global fallingcount
 
     x=extract_features(window).reshape(1,-1)
     act=classifier.predict(x)
     if(act[0]==0):
+        fallingcount = 0 
         onActivityDetected("Jogging")
         print("Jogging")
     if(act[0]==1):
+        fallingcount = 0 
         onActivityDetected("Jumping")
         print("Jumping")
     if(act[0]==2):
+        fallingcount = 0 
         onActivityDetected("Walking")
         print("Walking")
     if(act[0]==3):
+        fallingcount = 0 
         onActivityDetected("Stationary")
         print("Stationary")
     if(act[0]==4):
-        onActivityDetected("Falling")
-        print("Falling")
+        if(fallingcount >0 ):
+            fallingcount = 0
+            onActivityDetected("Falling")
+            print("Falling")
+        else:
+            fallingcount+=1
     if(act[0]==5):
+        fallingcount = 0 
         onActivityDetected("Sitting Down")
         print("Sitting Down")
     if(act[0]==6):
+        fallingcount = 0 
         onActivityDetected("Squating")
         print("Squating")
     if(act[0]==7):
+        fallingcount = 0 
         onActivityDetected("Dropping Phone")
         print("Dropping Phone")
     return

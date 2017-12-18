@@ -39,10 +39,10 @@ def _compute_FFT(window):
     x = window[:, 0]
     y = window[:, 1]
     z = window[:, 2]
-    frep = np.fft.rfftfreq(20)
-    xfft = np.fft.rfft(x, n=20).astype(float)
-    yfft = np.fft.rfft(y, n=20).astype(float)
-    zfft = np.fft.rfft(z, n=20).astype(float)
+    frep = np.fft.rfftfreq(window.size/3)
+    xfft = np.fft.rfft(x, n=window.size/3).astype(float)
+    yfft = np.fft.rfft(y, n=window.size/3).astype(float)
+    zfft = np.fft.rfft(z, n=window.size/3).astype(float)
     return np.array([[frep[xfft.argmax()]], [frep[yfft.argmax()]], [frep[zfft.argmax()]]])
 
 def _computer_entropy(window):
@@ -55,15 +55,29 @@ def _compute_acceleration(window):
     x = window[:, 0]
     y = window[:, 1]
     z = window[:, 2]
-    I = _distance(x[0],x[1],y[0],y[1],z[0],z[1])
-    S = 0.0
-    for i in range(19):
-        S = S + _distance(x[i],x[i+1],y[i],y[i+1],z[i],z[i+1])
-    A = 2*(S - I*19.00)/361.00
-    return A
 
-def _distance(x1,x2,y1,y2,z1,z2):
-    return math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2)
+    Ix = _distance(x[0],x[1])
+    Sx = 0.0
+    for i in range(window.size/3-1):
+        Sx = Sx + _distance(x[i],x[i+1])
+    Ax = 2*(Sx - Ix*(window.size/3-1))/(window.size/3-1)**2
+
+    Iy = _distance(y[0],y[1])
+    Sy = 0.0
+    for i in range(window.size/3-1):
+        Sy = Sy + _distance(y[i],y[i+1])
+    Ay = 2*(Sy - Iy*(window.size/3-1))/(window.size/3-1)**2
+
+    Iz = _distance(z[0],z[1])
+    Sz = 0.0
+    for i in range(window.size/3-1):
+        Sz = Sz + _distance(z[i],z[i+1])
+    Az = 2*(Sz - Iz*(window.size/3-1))/(window.size/3-1)**2
+
+    return [Ax,Ay,Az]
+
+def _distance(x1,x2):
+    return math.sqrt((x2-x1)**2)
 
 def extract_features(window):
     """

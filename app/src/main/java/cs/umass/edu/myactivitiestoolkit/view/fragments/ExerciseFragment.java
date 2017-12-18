@@ -107,7 +107,7 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
     private static final String TAG = ExerciseFragment.class.getName();
 
 
-    private int fallingcount = 0;
+
     /** The switch which toggles the {@link AccelerometerService}. **/
     private Switch switchAccelerometer;
 
@@ -280,8 +280,6 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                     String activity = intent.getStringExtra(Constants.KEY.ACTIVITY);
 
                     if(activity.equals("Falling")){
-                        if(fallingcount > 0) {
-                            fallingcount = 0;
                             displayActivity(activity);
 
                             final CountDownTimer countdown = new CountDownTimer(durationTime, 1000) {
@@ -315,14 +313,11 @@ public class ExerciseFragment extends Fragment implements AdapterView.OnItemSele
                                 }
                             });
                             alertDialog.show();
-                        }
-                        else{
-                            fallingcount ++;
-                        }
+
                     }
 
                     else {
-                        fallingcount = 0;
+
                         displayActivity(activity);
                     }
 
