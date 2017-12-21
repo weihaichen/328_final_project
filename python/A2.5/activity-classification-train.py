@@ -75,8 +75,8 @@ data = np.append(reoriented_data_with_timestamps, data[:,-1:], axis=1)
 
 # you may want to play around with the window and step sizes
 #default window_size = 100, step_size = 100
-window_size = 100
-step_size = 20
+window_size = 80
+step_size = 30
 
 # sampling rate for the sample data should be about 25 Hz; take a brief window to confirm this
 n_samples = 1000
